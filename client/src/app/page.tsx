@@ -1,7 +1,7 @@
 'use client';
 import ytdl from 'ytdl-core';
 import { useState } from 'react';
-
+import * as fs from 'fs-web';
 
 export default function Home() {
 	const [inputValue, setInputValue] = useState('');
@@ -13,9 +13,9 @@ export default function Home() {
 
 	}
 	const linkDownloader = (e) => {
-		/*ytdl(e)
-			.pipe(fs.createWriteStream('video.mp4')); */
-		 console.log(e);
+		const download = ytdl(e, { quality: 'audioonly'})
+				.pipe(fs.createWriteStream('video.mp4')); 
+	  console.log(e);
 	}
 
   return (
@@ -27,6 +27,7 @@ export default function Home() {
 						type='text'
 						id='link'
 						value={inputValue}
+						placeholder='https://youtube.com/.....'
 						onChange={(e) => setInputValue(e.target.value)}
 					/>
 				</div>
