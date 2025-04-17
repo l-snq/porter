@@ -14,7 +14,7 @@ export default function Home() {
 	}
 	const linkDownloader = (e) => {
 		const download = ytdl(e, { filter: 'audioonly'})
-				.pipe(fs.createWriteStream('video.mp4')); 
+				.pipe(fs.writefile('audio.mp3', 'audio')); 
 	  console.log(e);
 	}
 
