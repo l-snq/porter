@@ -13,7 +13,7 @@ export default function Home() {
 
 	}
 	const linkDownloader = (e) => {
-		const download = ytdl(e, { quality: 'audioonly'})
+		const download = ytdl(e, { filter: 'audioonly'})
 				.pipe(fs.createWriteStream('video.mp4')); 
 	  console.log(e);
 	}
