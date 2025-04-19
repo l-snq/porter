@@ -1,5 +1,5 @@
 'use client';
-import ytdl from 'ytdl-core';
+import ytdl, { validateURL } from 'ytdl-core';
 import { useState } from 'react';
 import * as fs from 'fs-web';
 
@@ -10,11 +10,12 @@ export default function Home() {
 		linkDownloader(inputValue);
 		const clearInput = document.getElementById('link');
 		clearInput.value = '';
-
 	}
+
 	const linkDownloader = (e) => {
 		const download = ytdl(e, { filter: 'audioonly'})
 				.pipe(fs.writefile('audio.mp3', 'audio')); 
+		console.log(validateURL(e))
 	  console.log(e);
 	}
 
