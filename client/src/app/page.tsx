@@ -13,10 +13,13 @@ export default function Home() {
 	}
 
 	const linkDownloader = (e) => {
-		const download = ytdl(e, { filter: 'audioonly'})
-				.pipe(fs.writefile('audio.mp3', 'audio')); 
-		console.log(validateURL(e))
-	  console.log(e);
+		if (validateURL(e)) {
+			const download = ytdl(e, { filter: 'audioonly'})
+					.pipe(fs.writefile('audio.mp3', 'audio')); 
+			console.log(e);
+		} else {
+			console.log('not a valid url');
+		}
 	}
 
   return (
