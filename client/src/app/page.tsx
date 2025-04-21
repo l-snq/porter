@@ -1,25 +1,15 @@
 'use client';
-import ytdl, { validateURL } from 'ytdl-core';
 import { useState } from 'react';
+import { downloadYTLink } from './ytdlAction';
 
 export default function Home() {
 	const [inputValue, setInputValue] = useState('');
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		linkDownloader(inputValue);
+		downloadYTLink(inputValue);
 		const clearInput = document.getElementById('link');
 		clearInput.value = '';
 	}
-
-	/*const linkDownloader = (e) => {
-		if (validateURL(e)) {
-			const download = ytdl(e, { filter: 'audioonly'})
-					.pipe(fs.writefile('audio.mp3', 'audio')); 
-			console.log(e);
-		} else {
-			console.log('not a valid url');
-		}
-	}*/
 
   return (
     <div>
