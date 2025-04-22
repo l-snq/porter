@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { FormEventHandler, useState } from 'react';
 import { downloadYTLink } from './ytdlAction';
 
 export default function Home() {
