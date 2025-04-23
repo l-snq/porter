@@ -7,6 +7,7 @@ export async function downloadYTLink(url: string) {
 		const something = ytdl(url, { filter: 'audioonly'}).pipe(fs.createWriteStream("audio.mp3"))
 		console.log(url);
 		console.log(something);
+		return something
 	} else {
 		console.log('not a valid url');
 	}
