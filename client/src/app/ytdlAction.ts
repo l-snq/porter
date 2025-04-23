@@ -4,7 +4,7 @@ import * as fs from 'fs';
 
 export async function downloadYTLink(url: string) {
 	if (validateURL(url)) {
-		const something = ytdl(url, { filter: 'audioonly'}).pipe(fs.createWriteStream("audio.mp3"))
+		const something = ytdl(url, { filter: 'audioonly'});
 		console.log(url);
 		console.log(something);
 		return something

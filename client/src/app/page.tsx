@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { downloadYTLink } from './ytdlAction';
 import { generateFileDownload } from './fileDownload';
 
 export default function Home() {

@@ -10,17 +10,14 @@ export async function generateFileDownload(url: string) {
   const filename = `${uuidv4()}.txt`;
   const filepath = join(process.cwd(), 'public', 'downloads', filename);
   
-	if (validateURL(url)) {
-		const something = ytdl(url, { filter: 'audioonly'})
-		console.log(url);
-		console.log(something);
-		return something
-	} else {
-		console.log('not a valid url');
-	}
   // Generate and write file content
-	const content = downloadYTLink(url);
-  await writeFile(filepath, content);
+  // unwrapping the promise, this returns WriteStream. Convert it?
+	const content = await downloadYTLink(url);  
+	if (content === undefined) {
+		console.log("undefined")
+	} else {
+		await writeFile(filepath, content);
+	}
   
   // Return the URL path to download
   return {
