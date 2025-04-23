@@ -1,12 +1,13 @@
 'use client';
 import { useState } from 'react';
 import { downloadYTLink } from './ytdlAction';
+import { generateFileDownload } from './fileDownload';
 
 export default function Home() {
 	const [inputValue, setInputValue] = useState('');
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		downloadYTLink(inputValue);
+		generateFileDownload(inputValue);
 		const clearInput = document.getElementById('link');
 		clearInput.value = '';
 	}
