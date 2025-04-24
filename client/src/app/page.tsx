@@ -1,12 +1,23 @@
 'use client';
-import { useState } from 'react';
+import { useState} from 'react';
+import { useRouter } from 'next/navigation';
 import { generateFileDownload } from './fileDownload';
 
 export default function Home() {
+	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false);
 	const [inputValue, setInputValue] = useState('');
-	const handleSubmit = (e) => {
+	async function handleSubmit(e) {
 		e.preventDefault();
-		generateFileDownload(inputValue);
+		try {
+			const { downloadUrl } = await generateFileDownload(e);
+			router.push(downloadUrl);
+			setIsLoading(true);
+		} catch(error) {
+			console.log("uh oh download failed: ", error);
+		} finally {
+			setIsLoading(false);
+		}
 		const clearInput = document.getElementById('link');
 		clearInput.value = '';
 	}
