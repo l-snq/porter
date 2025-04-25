@@ -14,6 +14,7 @@ export async function generateFileDownload(url: string) {
   // Generate and write file content
   // unwrapping the promise, this returns WriteStream. Convert it?
 	const content = await downloadYTLink(url);  
+	console.log("+++++++++++", content);
 	if (content === undefined) {
 		console.log("undefined")
 	} else {
