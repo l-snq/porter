@@ -31,6 +31,12 @@ export default function Home() {
 						placeholder='https://youtube.com/.....'
 						onChange={(e) => setInputValue(e.target.value)}
 					/>
+					<select id='audioFormat'>
+						<option value='flac'>FLAC</option>
+						<option value='MP3'>MP3</option>
+						<option value='OPUS'>OPUS</option>
+						<option value='OGG'>OGG</option>
+					</select>
 				</div>
 				<div>
 					<button>Download</button>
