@@ -4,10 +4,13 @@ import * as fs from 'fs';
 
 export async function downloadYTLink(url: string) {
 	if (validateURL(url)) {
-		const something = ytdl(url, { filter: 'audioonly'});
 		console.log(url);
-		console.log(something);
-		return something
+		try {
+			const something = ytdl(url, { filter: 'audioonly'});
+			console.log(something);
+		} catch(error) {
+			console.log(error);
+		}
 	} else {
 		console.log('not a valid url');
 	}

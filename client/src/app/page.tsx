@@ -10,9 +10,13 @@ export default function Home() {
 	const [inputValue, setInputValue] = useState('');
 	async function handleSubmit(e) {
 		e.preventDefault();
-		const { downloadUrl } = await generateFileDownload(e);
+		try {
+			const { downloadUrl } = await generateFileDownload(e);
+			console.log(downloadUrl);
+		} catch(error) {
+			console.log("something went wrong: ", error);
+		}
 		//router.push(downloadUrl);
-		console.log(downloadUrl);
 		const clearInput = document.getElementById('link');
 		clearInput.value = '';
 	}

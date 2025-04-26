@@ -11,8 +11,6 @@ export async function generateFileDownload(url: string) {
 
 	let file;
   
-  // Generate and write file content
-  // unwrapping the promise, this returns WriteStream. Convert it?
 	const content = await downloadYTLink(url);  
 	console.log("+++++++++++", content);
 	if (content === undefined) {
@@ -20,12 +18,8 @@ export async function generateFileDownload(url: string) {
 	} else {
 		file = await writeFile(filepath, content);
 	}
+  //https://stackoverflow.com/questions/68490546/how-to-download-a-file-on-next-js-using-an-api-route#68495303
   
-  // Return the URL path to download
-	/*
-  return {
-    downloadUrl: `/downloads/${filename}`,
-    filename: "large-download.txt"
-  };*/
+  // this returns void.
 	return file
 }
