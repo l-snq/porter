@@ -18,7 +18,7 @@ export default function Home() {
     { value: 'm4a', label: 'M4A' }
 	]
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!url) {
