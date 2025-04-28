@@ -9,13 +9,15 @@ body {
 	display: flex;
 }
 #square {
-	padding: 1em;
+	padding: 0.3em;
 	min-height: 20px;
 	min-width: 20px;
 	flex: 0;
 	margin-top: 1.0em;
 	margin-right: 0.9em;
 	background-color: orange;
+	color: white;
+	font-size: 15px;
 	width: 20px;
 	height: 20px;
 	transition-property: transform;
