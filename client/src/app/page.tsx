@@ -1,26 +1,47 @@
 'use client';
 import { useState} from 'react';
-import { useRouter } from 'next/navigation';
-import { generateFileDownload } from './fileDownload';
 import "./page.css";
 import SvgIcon from './porterIcon';
 
 export default function Home() {
-	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
-	const [inputValue, setInputValue] = useState('');
-	async function handleSubmit(e) {
-		e.preventDefault();
-		try {
-			const { downloadUrl } = await generateFileDownload(e);
-			console.log(downloadUrl);
-		} catch(error) {
-			console.log("something went wrong: ", error);
-		}
-		//router.push(downloadUrl);
-		const clearInput = document.getElementById('link');
-		clearInput.value = '';
-	}
+	const [url, setUrl] = useState('');
+	const [format, setFormat] = useState('mp3');
+	const [error, setError] = useState<string | null>(null);
+
+	const audioFormats = [
+    { value: 'mp3', label: 'MP3' },
+    { value: 'aac', label: 'AAC' },
+    { value: 'flac', label: 'FLAC' },
+    { value: 'ogg', label: 'OGG' },
+    { value: 'wav', label: 'WAV' },
+    { value: 'm4a', label: 'M4A' }
+	]
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    
+    if (!url) {
+      setError('Please enter a YouTube URL');
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Redirect to the download endpoint with format parameter
+      window.location.href = `/api/download?url=${encodeURIComponent(url)}&format=${format}`;
+      
+      // Reset loading state after a short delay
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
+    } catch (error) {
+      setError('Failed to process the video');
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div id='mainDiv'>
@@ -39,21 +60,35 @@ export default function Home() {
 					<input 
 						type='text'
 						id='link'
-						value={inputValue}
+						value={url}
 						placeholder='https://youtube.com/.....'
-						onChange={(e) => setInputValue(e.target.value)}
+						onChange={(e) => setUrl(e.target.value)}
 					/>
-					<select id='audioFormat'>
-						<option value='flac'>FLAC</option>
-						<option value='MP3'>MP3</option>
-						<option value='OPUS'>OPUS</option>
-						<option value='OGG'>OGG</option>
-					</select>
+					<select
+						id="format"
+						value={format}
+						onChange={(e) => setFormat(e.target.value)}
+						className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+					>
+						{audioFormats.map((format) => (
+							<option key={format.value} value={format.value}>
+								{format.label}
+							</option>
+						))}
+						</select>
 				</div>
 				<div>
-					<button>Download</button>
+					<button
+						type='submit'
+						disabled={isLoading}
+					>
+					{isLoading ? "Processing...." : `Convert to ${format.toUpperCase()}`}
+					</button>
 				</div>
 			</form>
+			{error && (
+				<div>Error: {error}</div>
+			)}
 		</div>
   );
 }
