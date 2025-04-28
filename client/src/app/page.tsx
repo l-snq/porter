@@ -23,7 +23,14 @@ export default function Home() {
 
   return (
     <div id='mainDiv'>
-			<h1>porter.</h1>
+			<div id="logo">
+				<div id="square">
+				./
+				</div>
+				<div> 
+					<h1>porter.</h1>
+				</div>
+			</div>
 			<h2>convert youtube videos to audio files.</h2>
 			<form onSubmit={handleSubmit}>
 				<div id='formDiv'>

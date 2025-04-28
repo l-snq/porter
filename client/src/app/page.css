@@ -2,5 +2,25 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-color: #fffbf7;
 }
 
+#logo {
+	display: flex;
+}
+#square {
+	flex: 0;
+	margin-top: 2.2em;
+	margin-right: 0.4em;
+	background-color: orange;
+	width: 20px;
+	height: 20px;
+	transition-property: transform;
+	transition-duration: 300ms;
+	transition-timing-function: ease;
+}
+
+#square:hover {
+	transform: rotate(40deg);
+
+}
