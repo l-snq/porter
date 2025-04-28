@@ -3,6 +3,7 @@ import { useState} from 'react';
 import { useRouter } from 'next/navigation';
 import { generateFileDownload } from './fileDownload';
 import "./page.css";
+import PorterSVG from '../../public/porter.svg';
 
 export default function Home() {
 	const router = useRouter();
@@ -30,6 +31,7 @@ export default function Home() {
 				<div> 
 					<h1>porter.</h1>
 				</div>
+				<img src={PorterSVG} alt='svg'/>
 			</div>
 			<h2>convert youtube videos to audio files.</h2>
 			<form onSubmit={handleSubmit}>
