@@ -2,7 +2,7 @@
 
 TODO:
 
-1. create inputs. Inputs for:
+1.(completed) create inputs. Inputs for:
 - website url
 - type of audio format you want (drop down): types of audio to offer are mp3, flac, ogg, opus.
 
