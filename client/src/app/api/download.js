@@ -54,6 +54,7 @@ export default async function handler(req, res) {
     // Set headers for file download
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.setHeader('Content-Type', contentType);
+		console.log(contentType);
     
     // Download audio only format with highest quality
     ytdl(url, {

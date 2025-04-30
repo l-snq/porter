@@ -1,9 +1,10 @@
 'use client';
 import { useState} from 'react';
 import "./page.css";
-import SvgIcon from './porterIcon';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+	const route = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 	const [url, setUrl] = useState('');
 	const [format, setFormat] = useState('mp3');
@@ -32,7 +33,8 @@ export default function Home() {
       setError(null);
       
       // Redirect to the download endpoint with format parameter
-      window.location.href = `/api/download?url=${encodeURIComponent(url)}&format=${format}`;
+      //window.location.href = `/api/download?url=${encodeURIComponent(url)}&format=${format}`;
+			route.push(`/api/download?url=${encodeURIComponent(url)}&format=${format}`);
       
       // Reset loading state after a short delay
       setTimeout(() => {
