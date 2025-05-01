@@ -9,6 +9,7 @@ body {
 #logo {
 	display: flex;
 }
+
 #square {
 	padding: 0.3em;
 	min-height: 20px;
@@ -28,5 +29,4 @@ body {
 
 #square:hover {
 	transform: rotate(40deg);
-
 }

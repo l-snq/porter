@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { mkdir, writeFile } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import os from 'os';
 
 export async function GET(request) {
