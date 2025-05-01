@@ -13,3 +13,4 @@ Right now, the ytdl-core repo from distube is failing for others, for multiple r
 Maybe i should just use the ytdlp wrapper (the terminal based wrapper) and make
 an app off of that, which albeit, is cursed. But if that works better, might be
 a better idea.
+check out: https://ytjs.dev/guide/getting-started.html and then use ffmpeg to convert the video to audio?
