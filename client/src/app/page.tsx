@@ -83,6 +83,7 @@ export default function Home() {
 					<button
 						type='submit'
 						disabled={isLoading}
+						className="submitButton"
 					>
 					{isLoading ? "Processing...." : `Convert to ${format.toUpperCase()}`}
 					</button>

@@ -30,3 +30,7 @@ body {
 #square:hover {
 	transform: rotate(40deg);
 }
+
+.submitButton {
+	background-color: red;
+}
