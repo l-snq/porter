@@ -5,6 +5,50 @@ import fs from 'fs';
 import path from 'path';
 import { mkdir } from 'fs/promises';
 import os from 'os';
+import * as FFmpeg from '@ffmpeg/ffmpeg';
+
+//webm blob type of blob, audiotype type of string.
+//this function is to return a Promise<Blob>
+async function convertWebmToAudio(webmBlob, audioType) {
+	const ffmpeg = createFFmpeg({ log: false});
+	await ffmpeg.load();
+
+	let outputAudioFileName;
+	switch (audioType) {
+		case 'audio/mpeg':
+			outputAudioFileName = 'mp3';
+			break;
+		case 'audio/aac':
+			outputAudioFileName = 'aac';
+			break;
+		case 'audio/flac':
+			outputAudioFileName = 'flac';
+			break;
+		case 'audio/ogg':
+			outputAudioFileName = 'ogg';
+			break;
+		case 'audio/wav':
+			outputAudioFileName = 'wav';
+			break;
+		case 'audio/m4a':
+			outputAudioFileName = 'm4a';
+			break;
+		default:
+			outputAudioFileName = "mp3";
+
+	}
+
+	const inputName = 'input.webm';
+	const outputName = `output.${outputAudioFileName}`;
+
+	ffmpeg.FS('writeFile', inputName, await fetch(webmBlob).then((res) => res.arrayBuffer()));
+	await ffmpeg.run('-i', inputName, outputName);
+
+	const outputData = ffmpeg.FS('readFile', outputName);
+	const outputBlob = new Blob([outputData.buffer], { type: audioType });
+
+	return outputBlob;
+}
 
 export async function GET(request) {
   try {
@@ -80,7 +124,7 @@ export async function GET(request) {
       });
       
       const fileStream = fs.createWriteStream(filePath);
-      
+
       stream.on('error', (error) => {
         console.error('Stream error:', error);
         reject(NextResponse.json({ error: 'Failed to download from YouTube: ' + error.message }, { status: 500 }));
