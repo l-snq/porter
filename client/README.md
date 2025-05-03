@@ -1,5 +1,6 @@
 # porter !!
 
+## NOTE !!! distubejs/ytdl-core is not working properly, and requires you to copy (this)[https://gist.github.com/luthfipun/3385a14816088d320ee00555667a1256] and replace the `sig.js` file in your node modules.
 TODO:
 
 1.(completed) create inputs. Inputs for:
