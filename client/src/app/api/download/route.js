@@ -139,6 +139,8 @@ export async function GET(request) {
         try {
           // Read the file back after download is complete
           const fileBuffer = await fs.promises.readFile(filePath);
+					// put the ffmpeg conversion function here?
+					const convertedFile = convertWebmToAudio(fileBuffer);
           
           // Return the file in the response
           const response = new NextResponse(fileBuffer, {
