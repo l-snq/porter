@@ -1,10 +1,8 @@
 'use client';
 import { useState} from 'react';
 import "./page.css";
-import { useRouter } from 'next/navigation';
 
 export default function Home() {
-	const route = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 	const [url, setUrl] = useState('');
 	const [format, setFormat] = useState('mp3');
