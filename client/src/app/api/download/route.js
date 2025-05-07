@@ -5,7 +5,6 @@ import fs from 'fs';
 import path from 'path';
 import { mkdir } from 'fs/promises';
 import os from 'os';
-import * as FFmpeg from '@ffmpeg/ffmpeg';
 
 //webm blob type of blob, audiotype type of string.
 //this function is to return a Promise<Blob>
