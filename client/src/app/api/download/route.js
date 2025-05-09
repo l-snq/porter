@@ -5,11 +5,12 @@ import fs from 'fs';
 import path from 'path';
 import { mkdir } from 'fs/promises';
 import os from 'os';
+import { FFmpeg } from '@ffmpeg/ffmpeg';
 
 //webm blob type of blob, audiotype type of string.
 //this function is to return a Promise<Blob>
-async function convertWebmToAudio(webmBlob, audioType) {
-	const ffmpeg = createFFmpeg({ log: false});
+async function convertWebmToAudio(arrayBuffer, audioType) {
+	const ffmpeg = new FFmpeg();
 	await ffmpeg.load();
 
 	let outputAudioFileName;
@@ -40,7 +41,7 @@ async function convertWebmToAudio(webmBlob, audioType) {
 	const inputName = 'input.webm';
 	const outputName = `output.${outputAudioFileName}`;
 
-	ffmpeg.FS('writeFile', inputName, await fetch(webmBlob).then((res) => res.arrayBuffer()));
+	ffmpeg.FS('writeFile', inputName, await fetch(arrayBuffer).then((res) => res.arrayBuffer()));
 	await ffmpeg.run('-i', inputName, outputName);
 
 	const outputData = ffmpeg.FS('readFile', outputName);
@@ -139,10 +140,10 @@ export async function GET(request) {
           // Read the file back after download is complete
           const fileBuffer = await fs.promises.readFile(filePath);
 					// put the ffmpeg conversion function here?
-					const convertedFile = convertWebmToAudio(fileBuffer);
+					const convertedFile = convertWebmToAudio(fileBuffer, contentType);
           
           // Return the file in the response
-          const response = new NextResponse(fileBuffer, {
+          const response = new NextResponse(convertedFile, contentType, {
             headers: {
               'Content-Disposition': `attachment; filename="${fileName}"`,
               'Content-Type': contentType,
