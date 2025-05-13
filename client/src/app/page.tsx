@@ -1,5 +1,6 @@
 'use client';
 import { useRef, useState} from 'react';
+import { FFmpeg } from '@ffmpeg/ffmpeg';
 import "./page.css";
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
 	const [url, setUrl] = useState('');
 	const [format, setFormat] = useState('mp3');
 	const [error, setError] = useState<string | null>(null);
+	const ffmpegRef = useRef(new FFmpeg());
 
 	const audioFormats = [
     { value: 'mp3', label: 'MP3' },
