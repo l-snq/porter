@@ -8,7 +8,10 @@ export default function Home() {
 	const [url, setUrl] = useState('');
 	const [format, setFormat] = useState('mp3');
 	const [error, setError] = useState<string | null>(null);
+
 	const ffmpegRef = useRef(new FFmpeg());
+	const [loaded, setLoaded] = useState(false);
+	const videoRef = useRef(null);
 
 	const audioFormats = [
     { value: 'mp3', label: 'MP3' },
@@ -18,6 +21,11 @@ export default function Home() {
     { value: 'wav', label: 'WAV' },
     { value: 'm4a', label: 'M4A' }
 	]
+
+	const load = async () => {
+		const ffmpeg = ffmpegRef.current;
+
+	}
 
 	// https://youtu.be/uXlVR98RT2I?si=j0bUsOvWfY7tR094
   const handleSubmit = async (e) => {
