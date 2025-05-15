@@ -8,10 +8,9 @@ import os from 'os';
 
 export async function GET(request) {
   try {
-    // Get URL and format from search params
+    // Get URL from search params
     const { searchParams } = new URL(request.url);
     const url = searchParams.get('url');
-    const format = searchParams.get('format') || 'mp3';
     
     if (!url) {
       return NextResponse.json({ error: 'YouTube URL is required' }, { status: 400 });
@@ -28,22 +27,20 @@ export async function GET(request) {
     
     // Generate UUID for filename
     const fileId = uuidv4();
-    const fileName = `${videoTitle}-${fileId}.${format}`;
+    const fileName = `${videoTitle}-${fileId}.webm`;
     
     // Create temp directory for downloads if it doesn't exist
     const tmpDir = path.join(os.tmpdir(), 'youtube-downloads');
     await mkdir(tmpDir, { recursive: true });
     const filePath = path.join(tmpDir, fileName);
     
-		//https://stackoverflow.com/questions/57365486/converting-blob-webm-to-audio-file-wav-or-mp3 // look at this to convert webm to your audio formats.
-    // Download the file first to disk to avoid streaming issues
+    // Download the file as webm for client-side conversion
     return new Promise((resolve, reject) => {
       const stream = ytdl(url, {
         filter: 'audioonly',
         quality: 'highestaudio',
         requestOptions: {
           headers: {
-            // Add these headers to mimic a browser request
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
@@ -68,12 +65,10 @@ export async function GET(request) {
       
       fileStream.on('finish', async () => {
         try {
-          // Read the file back after download is complete
+          // Read the file
           const fileBuffer = await fs.promises.readFile(filePath);
-					// put the ffmpeg conversion function here?
-					//const convertedFile = convertWebmToAudio(fileBuffer, contentType);
           
-          // Return the file in the response
+          // Return the webm file for client-side conversion
           const response = new NextResponse(fileBuffer, {
             headers: {
               'Content-Disposition': `attachment; filename="${fileName}"`,
@@ -81,9 +76,9 @@ export async function GET(request) {
             },
           });
           
-          // Clean up - delete the file
+          // Clean up
           fs.promises.unlink(filePath)
-						.catch(err => console.error('Error deleting temp file:', err));
+            .catch(err => console.error('Error deleting temp file:', err));
           
           resolve(response);
         } catch (readError) {
