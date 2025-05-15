@@ -6,47 +6,6 @@ import path from 'path';
 import { mkdir } from 'fs/promises';
 import os from 'os';
 
-//webm blob type of blob, audiotype type of string.
-//this function is to return a Promise<Blob>
-async function convertWebmToAudio(arrayBuffer, audioType) {
-
-	let outputAudioFileName;
-	switch (audioType) {
-		case 'audio/mpeg':
-			outputAudioFileName = 'mp3';
-			break;
-		case 'audio/aac':
-			outputAudioFileName = 'aac';
-			break;
-		case 'audio/flac':
-			outputAudioFileName = 'flac';
-			break;
-		case 'audio/ogg':
-			outputAudioFileName = 'ogg';
-			break;
-		case 'audio/wav':
-			outputAudioFileName = 'wav';
-			break;
-		case 'audio/m4a':
-			outputAudioFileName = 'm4a';
-			break;
-		default:
-			outputAudioFileName = "mp3";
-
-	}
-
-	const inputName = 'input.webm';
-	const outputName = `output.${outputAudioFileName}`;
-
-	/*ffmpeg.FS('writeFile', inputName, await fetch(arrayBuffer).then((res) => res.arrayBuffer()));
-	await ffmpeg.run('-i', inputName, outputName);
-
-	const outputData = ffmpeg.FS('readFile', outputName); */
-	//const outputBlob = new Blob([outputData.buffer], { type: audioType });
-
-	return outputBlob;
-}
-
 export async function GET(request) {
   try {
     // Get URL and format from search params
@@ -75,31 +34,6 @@ export async function GET(request) {
     const tmpDir = path.join(os.tmpdir(), 'youtube-downloads');
     await mkdir(tmpDir, { recursive: true });
     const filePath = path.join(tmpDir, fileName);
-    
-    // Set appropriate content type based on format
-    let contentType;
-    switch (format) {
-      case 'mp3':
-        contentType = 'audio/mpeg';
-        break;
-      case 'aac':
-        contentType = 'audio/aac';
-        break;
-      case 'flac':
-        contentType = 'audio/flac';
-        break;
-      case 'ogg':
-        contentType = 'audio/ogg';
-        break;
-      case 'wav':
-        contentType = 'audio/wav';
-        break;
-      case 'm4a':
-        contentType = 'audio/m4a';
-        break;
-      default:
-        contentType = 'audio/mpeg';
-    }
     
 		//https://stackoverflow.com/questions/57365486/converting-blob-webm-to-audio-file-wav-or-mp3 // look at this to convert webm to your audio formats.
     // Download the file first to disk to avoid streaming issues
@@ -140,15 +74,16 @@ export async function GET(request) {
 					//const convertedFile = convertWebmToAudio(fileBuffer, contentType);
           
           // Return the file in the response
-          const response = new NextResponse(fileBuffer, contentType, {
+          const response = new NextResponse(fileBuffer, {
             headers: {
               'Content-Disposition': `attachment; filename="${fileName}"`,
-              'Content-Type': contentType,
+              'Content-Type': 'audio/webm',
             },
           });
           
           // Clean up - delete the file
-          fs.promises.unlink(filePath).catch(err => console.error('Error deleting temp file:', err));
+          fs.promises.unlink(filePath)
+						.catch(err => console.error('Error deleting temp file:', err));
           
           resolve(response);
         } catch (readError) {
