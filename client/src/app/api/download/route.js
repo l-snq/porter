@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { mkdir } from 'fs/promises';
 import os from 'os';
+import { exec } from 'child_process';
 
 export async function GET(request) {
   try {
@@ -33,6 +34,10 @@ export async function GET(request) {
     const tmpDir = path.join(os.tmpdir(), 'youtube-downloads');
     await mkdir(tmpDir, { recursive: true });
     const filePath = path.join(tmpDir, fileName);
+
+		//exec('"yt-dlp" arg1 arg2')
+		//Basically pass in the variables for the youtube link, as well as specific file format
+		//escape variables with \\
     
     // Download the file as webm for client-side conversion
     return new Promise((resolve, reject) => {
