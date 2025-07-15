@@ -33,68 +33,6 @@ export default function YoutubeConverter() {
     { value: 'm4a', label: 'M4A' }
   ];
 
-  // Load FFmpeg on component mount
-  useEffect(() => {
-    let FFmpeg: any;
-    let fetchFile: any;
-    let toBlobURL: any;
-    
-    const loadFFmpeg = async () => {
-      try {
-        setFfmpegLoading(true);
-        
-        // Dynamically import modules
-        const { FFmpeg: FFmpegClass } = await import('@ffmpeg/ffmpeg');
-        const { fetchFile: fetchFileFunc, toBlobURL: toBlobURLFunc } = await import('@ffmpeg/util');
-        
-        // Store the imported modules
-        FFmpeg = FFmpegClass;
-        fetchFile = fetchFileFunc;
-        toBlobURL = toBlobURLFunc;
-        
-        // Create a new FFmpeg instance
-        const ffmpeg = new FFmpegClass();
-        ffmpegRef.current = ffmpeg;
-        
-        // Set up event listeners
-        ffmpeg.on('log', ({ message }: { message: string }) => {
-          if (messageRef.current) {
-            messageRef.current.innerHTML = message;
-          }
-        });
-        
-        ffmpeg.on('progress', ({ progress }: { progress: number }) => {
-          setProgress(Math.floor(progress * 100));
-        });
-        
-        // Load FFmpeg core
-        const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.2/dist/umd';
-        await ffmpeg.load({
-          coreURL: await toBlobURLFunc(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-          wasmURL: await toBlobURLFunc(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-        });
-        
-        setFfmpegLoaded(true);
-        console.log('FFmpeg loaded successfully');
-      } catch (error) {
-        console.error('Error loading FFmpeg:', error);
-        setError('Failed to load audio converter. Please try again later.');
-      } finally {
-        setFfmpegLoading(false);
-      }
-    };
-    
-    // Load FFmpeg
-    loadFFmpeg();
-    
-    // Cleanup
-    return () => {
-      if (ffmpegRef.current) {
-        ffmpegRef.current.terminate();
-      }
-    };
-  }, []);
-
   const validateYouTubeUrl = (url: string): boolean => {
     const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
     return youtubeRegex.test(url);
