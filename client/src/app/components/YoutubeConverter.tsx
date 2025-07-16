@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import "../page.css";
 
 // Define audio format interface
@@ -15,12 +15,9 @@ export default function YoutubeConverter() {
   const [format, setFormat] = useState<string>('mp3');
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<number>(0);
-  const [ffmpegLoaded, setFfmpegLoaded] = useState<boolean>(false);
-  const [ffmpegLoading, setFfmpegLoading] = useState<boolean>(false);
   const [conversionStatus, setConversionStatus] = useState<string>('');
   
   // Store FFmpeg instance in a ref without initializing it
-  const ffmpegRef = useRef<any>(null);
   const messageRef = useRef<HTMLPreElement | null>(null);
   
   // Define audio formats
@@ -39,19 +36,12 @@ export default function YoutubeConverter() {
   };
 
   const convertWebmToAudio = async (webmBlob: Blob, outputFormat: string): Promise<Blob> => {
-    const ffmpeg = ffmpegRef.current;
     
-    if (!ffmpeg || !ffmpeg.loaded) {
-      throw new Error('FFmpeg is not loaded yet');
-    }
     
     try {
       // Dynamically import fetchFile
-      const { fetchFile } = await import('@ffmpeg/util');
-      
       // Write webm file to memory
       const inputFileName = 'input.webm';
-      await ffmpeg.writeFile(inputFileName, await fetchFile(webmBlob));
       
       // Set output format and filename
       let outputFileName = `output.${outputFormat}`;
@@ -85,11 +75,6 @@ export default function YoutubeConverter() {
       
       // Execute FFmpeg conversion
       setConversionStatus('Converting audio...');
-      await ffmpeg.exec(ffmpegArgs);
-      
-      // Read the converted file
-      const data = await ffmpeg.readFile(outputFileName);
-      
       // Get appropriate MIME type
       let mimeType: string;
       switch (outputFormat) {
@@ -133,11 +118,6 @@ export default function YoutubeConverter() {
 
     if (!validateYouTubeUrl(url)) {
       setError('Please enter a valid YouTube URL');
-      return;
-    }
-    
-    if (!ffmpegLoaded) {
-      setError('Audio converter is not ready yet. Please wait a moment and try again.');
       return;
     }
     
@@ -209,12 +189,6 @@ export default function YoutubeConverter() {
       </div>
       
       <h2>convert youtube videos to audio files.</h2>
-      
-      {!ffmpegLoaded && ffmpegLoading ? (
-        <div className="loading">
-          <p>Loading audio converter... Please wait.</p>
-        </div>
-      ) : (
         <form onSubmit={handleSubmit}>
           <div id='formDiv'>
             <label>youtube link: </label>
@@ -244,15 +218,13 @@ export default function YoutubeConverter() {
           <div>
             <button
               type='submit'
-              disabled={isLoading || !ffmpegLoaded}
+              disabled={isLoading}
               className="submitButton"
             >
               {isLoading ? "Processing..." : `Convert to ${format.toUpperCase()}`}
             </button>
           </div>
         </form>
-      )}
-      
       {isLoading && (
         <div className="progress-container">
           <div className="progress-status">{conversionStatus}</div>
