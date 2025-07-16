@@ -33,3 +33,74 @@ body {
 
 .submitButton {
 }
+
+/* Spinner animation */
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.spinner {
+	display: inline-block;
+	margin: 1em 0;
+}
+
+.spinner svg {
+	animation: spin 1s linear infinite;
+	width: 40px;
+	height: 40px;
+}
+
+.progress-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 2em 0;
+	gap: 1em;
+}
+
+.progress-status {
+	font-size: 1.1em;
+	color: #333;
+}
+
+.error {
+	color: #d32f2f;
+	background-color: #ffebee;
+	padding: 1em;
+	border-radius: 4px;
+	margin: 1em 0;
+	border: 1px solid #f8bbd9;
+}
+
+.info {
+	margin-top: 3em;
+	padding: 1.5em;
+	background-color: #f5f5f5;
+	border-radius: 8px;
+	border: 1px solid #ddd;
+}
+
+.info h3 {
+	margin-top: 0;
+	color: #333;
+}
+
+.info ul {
+	margin: 0.5em 0;
+	padding-left: 1.5em;
+}
+
+.info li {
+	margin: 0.25em 0;
+}
+
+.note {
+	font-style: italic;
+	color: #666;
+	margin-top: 1em;
+}

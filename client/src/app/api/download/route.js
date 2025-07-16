@@ -1,4 +1,3 @@
-import ytdl from '@distube/ytdl-core';
 import { v4 as uuidv4 } from 'uuid';
 import { NextResponse } from 'next/server';
 import fs from 'fs';
@@ -6,95 +5,122 @@ import path from 'path';
 import { mkdir } from 'fs/promises';
 import os from 'os';
 import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 export async function GET(request) {
   try {
-    // Get URL from search params
+    // Get URL and format from search params
     const { searchParams } = new URL(request.url);
     const url = searchParams.get('url');
+    const format = searchParams.get('format') || 'mp3';
     
     if (!url) {
       return NextResponse.json({ error: 'YouTube URL is required' }, { status: 400 });
     }
     
     // Validate YouTube URL
-    if (!ytdl.validateURL(url)) {
+    const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
+    if (!youtubeRegex.test(url)) {
       return NextResponse.json({ error: 'Invalid YouTube URL' }, { status: 400 });
     }
     
-    // Get video info
-    const info = await ytdl.getInfo(url);
-    const videoTitle = info.videoDetails.title.replace(/[^\w\s]/gi, ''); // Sanitize title
-    
     // Generate UUID for filename
     const fileId = uuidv4();
-    const fileName = `${videoTitle}-${fileId}.webm`;
     
     // Create temp directory for downloads if it doesn't exist
     const tmpDir = path.join(os.tmpdir(), 'youtube-downloads');
     await mkdir(tmpDir, { recursive: true });
-    const filePath = path.join(tmpDir, fileName);
-
-		//exec('"yt-dlp" arg1 arg2')
-		//Basically pass in the variables for the youtube link, as well as specific file format
-		//escape variables with \\
     
-    // Download the file as webm for client-side conversion
-    return new Promise((resolve, reject) => {
-      const stream = ytdl(url, {
-        filter: 'audioonly',
-        quality: 'highestaudio',
-        requestOptions: {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Cache-Control': 'max-age=0'
-          }
-        }
-      });
-      
-      const fileStream = fs.createWriteStream(filePath);
-
-      stream.on('error', (error) => {
-        console.error('Stream error:', error);
-        reject(NextResponse.json({ error: 'Failed to download from YouTube: ' + error.message }, { status: 500 }));
-      });
-      
-      fileStream.on('error', (error) => {
-        console.error('File write error:', error);
-        reject(NextResponse.json({ error: 'Failed to write file: ' + error.message }, { status: 500 }));
-      });
-      
-      fileStream.on('finish', async () => {
-        try {
-          // Read the file
-          const fileBuffer = await fs.promises.readFile(filePath);
-          
-          // Return the webm file for client-side conversion
-          const response = new NextResponse(fileBuffer, {
-            headers: {
-              'Content-Disposition': `attachment; filename="${fileName}"`,
-              'Content-Type': 'audio/webm',
-            },
-          });
-          
-          // Clean up
-          fs.promises.unlink(filePath)
-            .catch(err => console.error('Error deleting temp file:', err));
-          
-          resolve(response);
-        } catch (readError) {
-          console.error('Error reading file:', readError);
-          reject(NextResponse.json({ error: 'Failed to prepare file for download' }, { status: 500 }));
-        }
-      });
-      
-      // Pipe the YouTube stream to the file
-      stream.pipe(fileStream);
+    // Get video info first to get the title
+    const infoCommand = `yt-dlp --get-title "${url}"`;
+    const { stdout: titleOutput } = await execAsync(infoCommand);
+    const videoTitle = titleOutput.trim().replace(/[^\w\s-]/gi, '').replace(/\s+/g, '_');
+    
+    const fileName = `${videoTitle}-${fileId}.${format}`;
+    const filePath = path.join(tmpDir, fileName);
+    
+    // Build yt-dlp command based on format
+    let ytdlpCommand;
+    
+    switch (format) {
+      case 'mp3':
+        ytdlpCommand = `yt-dlp -x --audio-format mp3 --audio-quality 0 -o "${filePath.replace(`.${format}`, '.%(ext)s')}" "${url}"`;
+        break;
+      case 'aac':
+        ytdlpCommand = `yt-dlp -x --audio-format aac --audio-quality 0 -o "${filePath.replace(`.${format}`, '.%(ext)s')}" "${url}"`;
+        break;
+      case 'flac':
+        ytdlpCommand = `yt-dlp -x --audio-format flac -o "${filePath.replace(`.${format}`, '.%(ext)s')}" "${url}"`;
+        break;
+      case 'ogg':
+        ytdlpCommand = `yt-dlp -x --audio-format vorbis -o "${filePath.replace(`.${format}`, '.%(ext)s')}" "${url}"`;
+        break;
+      case 'wav':
+        ytdlpCommand = `yt-dlp -x --audio-format wav -o "${filePath.replace(`.${format}`, '.%(ext)s')}" "${url}"`;
+        break;
+      case 'm4a':
+        ytdlpCommand = `yt-dlp -x --audio-format m4a --audio-quality 0 -o "${filePath.replace(`.${format}`, '.%(ext)s')}" "${url}"`;
+        break;
+      default:
+        ytdlpCommand = `yt-dlp -x --audio-format mp3 --audio-quality 0 -o "${filePath.replace(`.${format}`, '.%(ext)s')}" "${url}"`;
+    }
+    
+    // Execute yt-dlp command
+    await execAsync(ytdlpCommand);
+    
+    // Find the actual downloaded file (yt-dlp might change the extension)
+    const files = await fs.promises.readdir(tmpDir);
+    const downloadedFile = files.find(file => file.startsWith(`${videoTitle}-${fileId}`));
+    
+    if (!downloadedFile) {
+      return NextResponse.json({ error: 'Failed to find downloaded file' }, { status: 500 });
+    }
+    
+    const actualFilePath = path.join(tmpDir, downloadedFile);
+    
+    // Read the file
+    const fileBuffer = await fs.promises.readFile(actualFilePath);
+    
+    // Get appropriate MIME type
+    let mimeType;
+    switch (format) {
+      case 'mp3':
+        mimeType = 'audio/mpeg';
+        break;
+      case 'aac':
+        mimeType = 'audio/aac';
+        break;
+      case 'flac':
+        mimeType = 'audio/flac';
+        break;
+      case 'ogg':
+        mimeType = 'audio/ogg';
+        break;
+      case 'wav':
+        mimeType = 'audio/wav';
+        break;
+      case 'm4a':
+        mimeType = 'audio/mp4';
+        break;
+      default:
+        mimeType = 'audio/mpeg';
+    }
+    
+    // Return the audio file
+    const response = new NextResponse(fileBuffer, {
+      headers: {
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+        'Content-Type': mimeType,
+      },
     });
+    
+    // Clean up
+    fs.promises.unlink(actualFilePath)
+      .catch(err => console.error('Error deleting temp file:', err));
+    
+    return response;
   } catch (error) {
     console.error('Error downloading video:', error);
     return NextResponse.json({ 

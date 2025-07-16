@@ -1,6 +1,6 @@
 import * as React from "react";
 
-const SvgIcon = (props) => (
+const SvgIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     id="svg1"
@@ -29,7 +29,6 @@ const SvgIcon = (props) => (
         style={{
           textAlign: "start",
           whiteSpace: "pre",
-          shapeInside: "url(#rect2)",
         }}
         transform="matrix(2.86144 0 0 2.14475 -479.336 -814.313)"
         writingMode="lr-tb"
