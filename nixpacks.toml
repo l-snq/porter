@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["nodejs_18", "python3", "yt-dlp"]
+
+[phases.build]
+cmds = ["cd client && npm install && npm run build"]
+
+[phases.start]
+cmd = "cd client && npm start"
