@@ -99,7 +99,7 @@ export default function YoutubeConverter() {
       }, 3000);
     } catch (error) {
       console.error('Error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to process the video. Please try again.');
+      setError(error instanceof Error ? error.message : 'Uh oh, Failed to process the video. Please try again.');
     } finally {
       setIsLoading(false);
     }
