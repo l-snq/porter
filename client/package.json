@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-	"homepage": "yt-porter.org",
+	"homepage": "https://yt-porter.org",
   "scripts": {
     "dev": "next dev",
     "build": "CI=false next build",
