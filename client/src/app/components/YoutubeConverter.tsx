@@ -123,6 +123,7 @@ export default function YoutubeConverter() {
               placeholder='https://youtube.com/.....'
               onChange={(e) => setUrl(e.target.value)}
               disabled={isLoading}
+							autoFocus
             />
             
             <select
