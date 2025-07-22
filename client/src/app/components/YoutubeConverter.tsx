@@ -24,7 +24,8 @@ export default function YoutubeConverter() {
     { value: 'flac', label: 'FLAC' },
     { value: 'ogg', label: 'OGG' },
     { value: 'wav', label: 'WAV' },
-    { value: 'm4a', label: 'M4A' }
+    { value: 'm4a', label: 'M4A' },
+    { value: 'opus', label: 'OPUS' }
   ];
 
   const validateYouTubeUrl = (url: string): boolean => {
