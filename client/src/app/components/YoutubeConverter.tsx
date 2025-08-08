@@ -29,6 +29,7 @@ export default function YoutubeConverter() {
   ];
 
   const validateYouTubeUrl = (url: string): boolean => {
+		// just use the in house validate url that yt-dlp comes with?
     const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
     return youtubeRegex.test(url);
   };
